@@ -590,6 +590,24 @@ type RouteData struct {
 	Metric      uint32
 }
 
+type IcmpOption struct {
+	Ttl         byte
+	Tos         byte
+	Flags       byte
+	OptionsSize byte
+	OptionsData uintptr
+}
+
+type IcmpReply struct {
+	Address       uint32
+	Status        int32
+	RoundTripTime int32
+	DataSize      uint16
+	Reserved      uint16
+	DataPtr       uintptr
+	Options       IcmpOption
+}
+
 func (routeData *RouteData) String() string {
 	return fmt.Sprintf("%+v", *routeData)
 }

@@ -194,3 +194,27 @@ func SetInterfaceDnsSettings(guid windows.GUID, settings *DnsInterfaceSettings) 
 		panic("unknown calling convention")
 	}
 }
+
+func IcmpCreateFile() uintptr {
+	return icmpCreateFile()
+}
+
+func IcmpCloseHandle(handle uintptr) bool {
+	return icmpCloseHandle(handle)
+}
+
+func IcmpSendEcho2Ex(
+	icmpHandle uintptr,
+	event uintptr,
+	apcroutine uintptr,
+	apccontext uintptr,
+	sourceAddress uint32,
+	destinationAddress uint32,
+	requestData uintptr,
+	requestSize uint16,
+	option *IcmpOption,
+	replyBuffer uintptr,
+	replySize uint32,
+	timeout uint32) uint {
+	return icmpSendEcho2Ex(icmpHandle, event, apcroutine, apccontext, sourceAddress, destinationAddress, requestData, requestSize, option, replyBuffer, replySize, timeout)
+}

@@ -71,6 +71,9 @@ var (
 	procSetIpForwardEntry2              = modiphlpapi.NewProc("SetIpForwardEntry2")
 	procSetIpInterfaceEntry             = modiphlpapi.NewProc("SetIpInterfaceEntry")
 	procSetUnicastIpAddressEntry        = modiphlpapi.NewProc("SetUnicastIpAddressEntry")
+	procIcmpSendEcho2Ex                 = modiphlpapi.NewProc("IcmpSendEcho2Ex")
+	procIcmpCreateFile                  = modiphlpapi.NewProc("IcmpCreateFile")
+	procIcmpCloseHandle                 = modiphlpapi.NewProc("IcmpCloseHandle")
 )
 
 func cancelMibChangeNotify2(notificationHandle windows.Handle) (ret error) {
@@ -347,4 +350,45 @@ func setUnicastIPAddressEntry(row *MibUnicastIPAddressRow) (ret error) {
 		ret = syscall.Errno(r0)
 	}
 	return
+}
+
+func icmpCreateFile() uintptr {
+	r0, _, _ := syscall.Syscall(procIcmpCreateFile.Addr(), 0, 0, 0, 0)
+	return r0
+}
+
+func icmpCloseHandle(handle uintptr) bool {
+	r0, _, _ := syscall.SyscallN(procIcmpCloseHandle.Addr(), handle)
+	return r0 != 0
+}
+
+func icmpSendEcho2Ex(
+	icmpHandle uintptr,
+	event uintptr,
+	apcroutine uintptr,
+	apccontext uintptr,
+	sourceAddress uint32,
+	destinationAddress uint32,
+	requestData uintptr,
+	requestSize uint16,
+	option *IcmpOption,
+	replyBuffer uintptr,
+	replySize uint32,
+	timeout uint32) (ret uint) {
+	r0, _, _ := syscall.SyscallN(procIcmpSendEcho2Ex.Addr(),
+		icmpHandle,
+		event,
+		apcroutine,
+		apccontext,
+		uintptr(sourceAddress),
+		uintptr(destinationAddress),
+		uintptr(requestData),
+		uintptr(requestSize),
+		uintptr(unsafe.Pointer(option)),
+		replyBuffer,
+		uintptr(replySize),
+		uintptr(timeout),
+	)
+
+	return uint(r0)
 }
